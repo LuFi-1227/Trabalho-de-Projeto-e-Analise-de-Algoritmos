@@ -18,6 +18,7 @@
 
 long int compMerge = 0, trocMerge = 0;
 long int compQuick = 0, trocQuick = 0;
+long int compHeap = 0, trocHeap = 0;
 
 void printVetor(int *A, int n){
     printf("[");
@@ -242,6 +243,60 @@ void preencheVetor(int *V, int n){
         V[i] = atoi(num);
     }
     fclose(F);
+}
+
+void peneira(int *vet, int raiz, int fundo) {
+	int pronto, filhoMax, tmp;
+
+	pronto = 0;
+	while ((raiz*2 <= fundo) && (!pronto)) {
+        compHeap+=2;
+		if (raiz*2 == fundo) {
+            compHeap++;
+			filhoMax = raiz * 2;
+		}
+		else if (vet[raiz * 2] > vet[raiz * 2 + 1]) {
+            compHeap++;
+			filhoMax = raiz * 2;
+		}
+		else {
+			filhoMax = raiz * 2 + 1;
+		}
+
+	if (vet[raiz] < vet[filhoMax]) {
+        compHeap++;
+		tmp = vet[raiz];
+		vet[raiz] = vet[filhoMax];
+		vet[filhoMax] = tmp;
+		raiz = filhoMax;
+        trocHeap++;
+    }
+	else {
+      pronto = 1;
+	}
+  }
+}
+
+void heapsort(int *vet, int n) {
+    printf(YELLOW "\n\n\nExecução do Heap Sort\n\n\n" NONE);
+	int i, tmp;
+
+	for (i = (n / 2); i >= 0; i--) {
+        compHeap++;
+		peneira(vet, i, n - 1);
+	}
+    compHeap++;
+
+	for (i = n-1; i >= 1; i--) {
+        compHeap++;
+		tmp = vet[0];
+		vet[0] = vet[i];
+		vet[i] = tmp;
+        trocHeap++;
+		peneira(vet, 0, i-1);
+	}
+    compHeap++;
+    printFunc(compHeap, trocHeap);
 }
 
 int main(){
