@@ -14,7 +14,7 @@
 #define MAGENTA   "\033[35m"
 #define CYAN      "\033[36m"
 
-#define func bubleSort
+#define func heapsort
 
 long int compMerge = 0, trocMerge = 0;
 long int compQuick = 0, trocQuick = 0;
@@ -35,10 +35,9 @@ void printFunc(long int comp, long int troc){
 
 void bubleSort(int *A, int n){
     printf(YELLOW "\n\n\nExecução do BubleSort\n\n\n" NONE);
-    long int comp = 2;
+    long int comp = 0;
     long int troc = 0;
     for(int i=0; i<n; i++){
-        comp++;
         for(int j=n; j>i; j--){
             comp++;
             if(A[j]<A[j-1]){
@@ -47,7 +46,6 @@ void bubleSort(int *A, int n){
                 A[j-1] = aux;
                 troc++;
             }
-            comp++;
         }
     }
     printFunc(comp, troc);
@@ -56,10 +54,9 @@ void bubleSort(int *A, int n){
 void selectionSort(int* A, int n){
     printf(YELLOW "\n\n\nExecução do selection sort\n\n\n" NONE);
     int smallest = 0;
-    long int comp = 2;
+    long int comp = 0;
     long int troc = 0;
     for(int i=0; i<n-1; i++){
-        comp++;
         smallest = i;
         for(int j=i+1; j<n; j++){
             if(A[j]<A[smallest]){
@@ -77,43 +74,42 @@ void selectionSort(int* A, int n){
 
 void insertionSort(int* A, int n){
     printf(YELLOW "\n\n\nExecução do Insertion Sort\n\n\n" NONE);
-    long int comp = 1;
+    long int comp = 0;
     long int troc = 0;
     for(int j=1; j<n; j++){
-        comp++;
         int key = A[j];
         int i = j-1;
         while(i>=0 && A[i]>key){
             A[i+1] = A[i];
             i--;
-            comp = comp+2;
+            comp++;
+            troc++;
         }
+        comp++;
         A[i+1] = key;
-        troc++;
     }
     printFunc(comp, troc);
 }
 
 void merge(int arr[], int left, int mid, int right) {
-    long int comp = 6;
+    long int comp = 0;
     long int troc = 0;
     int i, j, k;
     int n1 = mid - left + 1;
     int n2 = right - mid;
     int leftArr[n1], rightArr[n2];
+    //Divide o vetor
     for (i = 0; i < n1; i++){
-        comp++;
         leftArr[i] = arr[left + i];
-        troc++;
     }
     for (j = 0; j < n2; j++){
-        comp++;
         rightArr[j] = arr[mid + 1 + j];
-        troc++;
     }
+
     i = 0;
     j = 0;
     k = left;
+
     while (i < n1 && j < n2) {
         if (leftArr[i] <= rightArr[j]) {
             arr[k] = leftArr[i];
@@ -125,18 +121,17 @@ void merge(int arr[], int left, int mid, int right) {
             troc++;
             j++;
         }
-        comp+=3;
+        comp++;
         k++;
     }
+
     while (i < n1) {
-        comp++;
         arr[k] = leftArr[i];
         troc++;
         i++;
         k++;
     }
     while (j < n2) {
-        comp++;
         arr[k] = rightArr[j];
         troc++;
         j++;
@@ -153,9 +148,12 @@ void mergeSort1(int arr[], int left, int right) {
         mergeSort1(arr, mid + 1, right);
         merge(arr, left, mid, right);
     }
+    compMerge++;
 }
 
 void mergeSort(int arr[], int left, int right) {
+    compMerge = 0;
+    trocMerge = 0;
     printf(YELLOW "\n\n\nExecução do Merge Sort\n\n\n" NONE);
     if (left < right) {
         int mid = left + (right - left) / 2;
@@ -163,6 +161,7 @@ void mergeSort(int arr[], int left, int right) {
         mergeSort1(arr, mid + 1, right);
         merge(arr, left, mid, right);
     }
+    compMerge++;
 
     printFunc(compMerge, trocMerge);
 }
@@ -178,7 +177,6 @@ int particiona(int vet[], int inicio, int fim){
 	int pivo, pivo_indice, i;
 	pivo = vet[fim];
 	pivo_indice = inicio;
-	compQuick++;
 	for(i = inicio; i < fim; i++)
 	{
 		if(vet[i] <= pivo)
@@ -186,7 +184,7 @@ int particiona(int vet[], int inicio, int fim){
 			troca(vet, i, pivo_indice);
 			pivo_indice++;
 		}
-        compQuick +=2;
+        	compQuick++;
 	}
     troca(vet, pivo_indice, fim);
 	return pivo_indice;
@@ -209,6 +207,8 @@ void quick_sort1(int vet[], int inicio, int fim){
 
 void quick_sort(int vet[], int inicio, int fim)
 {
+    compQuick = 0;
+    trocQuick = 0;
     printf(YELLOW "\n\n\nExecução do Quick Sort\n\n\n" NONE);
 	if(inicio < fim)
 	{
@@ -250,9 +250,7 @@ void peneira(int *vet, int raiz, int fundo) {
 
 	pronto = 0;
 	while ((raiz*2 <= fundo) && (!pronto)) {
-        compHeap+=2;
 		if (raiz*2 == fundo) {
-            compHeap++;
 			filhoMax = raiz * 2;
 		}
 		else if (vet[raiz * 2] > vet[raiz * 2 + 1]) {
@@ -260,11 +258,11 @@ void peneira(int *vet, int raiz, int fundo) {
 			filhoMax = raiz * 2;
 		}
 		else {
+			compHeap++;
 			filhoMax = raiz * 2 + 1;
 		}
-
+	compHeap++;
 	if (vet[raiz] < vet[filhoMax]) {
-        compHeap++;
 		tmp = vet[raiz];
 		vet[raiz] = vet[filhoMax];
 		vet[filhoMax] = tmp;
@@ -278,40 +276,36 @@ void peneira(int *vet, int raiz, int fundo) {
 }
 
 void heapsort(int *vet, int n) {
+    compHeap = 0;
+    trocHeap = 0;
     printf(YELLOW "\n\n\nExecução do Heap Sort\n\n\n" NONE);
 	int i, tmp;
 
 	for (i = (n / 2); i >= 0; i--) {
-        compHeap++;
 		peneira(vet, i, n - 1);
 	}
-    compHeap++;
 
 	for (i = n-1; i >= 1; i--) {
-        compHeap++;
 		tmp = vet[0];
 		vet[0] = vet[i];
 		vet[i] = tmp;
         trocHeap++;
 		peneira(vet, 0, i-1);
 	}
-    compHeap++;
     printFunc(compHeap, trocHeap);
 }
 
 int main(){
     int vet[] = {1000, 10000, 50000, 100000};
     clock_t t; //Variável que recebe o tempo inicial
-    int *vetor = (int*)malloc(sizeof(int)*(vet[0]));
-    sorteiaVetorAleatorio(100000); //Sorteio será feito com valor máximo de elementos
+    int *vetor;
+    //sorteiaVetorAleatorio(100000); //Sorteio será feito com valor máximo de elementos
 
     int TAM; //Definição do tamanho do vetor
     printf(RED "Vetor desordenado:\n\n" NONE);
     for(int i=0; i<4; i++){
         TAM = vet[i];
-        if(i>0){
-            vetor = (int*)realloc(vetor, sizeof(int)*TAM);
-        }
+        vetor = (int*)malloc(sizeof(int)*TAM);
 
         preencheVetor(vetor, TAM);
 
@@ -322,16 +316,15 @@ int main(){
         t = clock() - t;
 
         printf(GREEN "\n\nTempo de execucao para vetor de %d posicoes: %lf milisegundos\n\n" NONE, TAM, ((double)t)/((CLOCKS_PER_SEC/1000))); //conversão para double
+        if(i<3)
+            free(vetor);
     }
+    
+    
 
     printf(RED "Vetor Crescente:\n\n" NONE);
     for(int i=0; i<4; i++){
         TAM = vet[i];
-        vetor = (int*)realloc(vetor, sizeof(int)*TAM);
-
-        for(int j=0; j<TAM; j++){
-            vetor[j] = j;
-        }
 
         t = clock();
         //printVetor(vetor, TAM);
@@ -342,10 +335,12 @@ int main(){
         printf(GREEN "\n\nTempo de execucao para vetor de %d posicoes: %lf milisegundos\n\n" NONE, TAM, ((double)t)/((CLOCKS_PER_SEC/1000))); //conversão para double
     }
 
+    free(vetor);
+
     printf(RED "Vetor Decrescente:\n\n" NONE);
     for(int i=0; i<4; i++){
         TAM = vet[i];
-        vetor = (int*)realloc(vetor, sizeof(int)*TAM);
+        vetor = (int*)malloc(sizeof(int)*TAM);
 
         int k=0;
         for(int j=TAM; j>=0; j--){
@@ -360,5 +355,6 @@ int main(){
         t = clock() - t;
 
         printf(GREEN "\n\nTempo de execucao para vetor de %d posicoes: %lf milisegundos\n\n" NONE, TAM, ((double)t)/((CLOCKS_PER_SEC/1000))); //conversão para double
+        free(vetor);
     }
 }
